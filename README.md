@@ -28,9 +28,21 @@ SPACE_CLOCK     93.75%
 
 The joint medium is the only arm with positive mean worst-frequency routing margin (+3.30 dB). Training receives only paired scalar task consequences from parameter perturbations; there is no per-input branch selector.
 
+**Gate 1 freezes those bodies** and gives them 512 unseen mixtures of finite packets with randomized phase, amplitude, width, onset, and nearby carrier frequency. Without any retraining:
+
+```text
+SPACE_ONLY      81.18% routed components
+CLOCK_ONLY      74.90%
+SPACE_CLOCK     94.24%
+SHUFFLED        77.87%
+```
+
+So the same learned medium extends from isolated tones to superposed transient packets. A best joint seed routes all 1,024 packet components correctly.
+
 This is **physics-routed computation in a simulated resonant medium**, not free computation on a GPU and not gravitational attention.
 
-- [live demo](index.html)
+- [live steady-state demo](index.html)
+- [live finite-packet demo](packets.html)
 - [experiment](physics_router/experiment.py)
 - [receipt](physics_router/results/GATE0.json)
 - [method and boundaries](physics_router/README.md)
