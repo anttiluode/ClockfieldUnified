@@ -25,3 +25,5 @@ jobs:
         run: python physics_router/experiment.py
       - name: Run physics-router Gate 1
         run: python physics_router/gate1_packets.py
+      - name: Run physics-router Gate 2
+        run: python physics_router/gate2_local_plasticity.py
