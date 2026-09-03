@@ -1,0 +1,84 @@
+{
+  "gate": 2,
+  "classification": "LOCAL_ELIGIBILITY_PLUS_GLOBAL_PULSE_TRAINS_ROUTING_BODY",
+  "passed": true,
+  "learning_rule": {
+    "edge_local_trace": "mean |x_i-x_j|^2 across calibration tones",
+    "node_local_trace": "mean omega^2 |x_i|^2 across calibration tones",
+    "eligibility_probability": "0.4 + 0.6 * normalized_local_traffic",
+    "stored_local_eligibility": "independent local +/- perturbation sign",
+    "global_signal": "one scalar paired consequence difference (L_plus-L_minus)/(2*epsilon)",
+    "local_update": "parameter_i <- parameter_i - eta * global_signal * eligibility_i (with local Adam-like moments)",
+    "global_homeostasis": "fixed total edge-coupling budget and fixed total clock-mass budget",
+    "important_boundary": "Distributed simultaneous perturbation / three-factor learning; not a novel credit-assignment theorem."
+  },
+  "training": {
+    "seeds": 12,
+    "updates_per_seed": 1600,
+    "scalar_consequence_evaluations_per_update": 2,
+    "autograd": false,
+    "central_parameter_gradient": false
+  },
+  "packet_evaluation": {
+    "gate2_retraining": false,
+    "mixtures": 512,
+    "components_per_body": 1024,
+    "mixture_seed": 20260903
+  },
+  "aggregate": {
+    "TRAFFIC_GATED": {
+      "heldout_accuracy": {"mean":0.975,"min":0.85,"max":1.0,"std":0.04921254921257383},
+      "heldout_mean_margin_db": {"mean":13.369157624604133,"min":11.768795652594344,"max":15.621551049237059,"std":1.0409508175344584},
+      "heldout_min_margin_db": {"mean":1.5616413255679227,"min":-0.3542014460589251,"max":5.255487232256727,"std":1.6518787184990638},
+      "active_fraction": {"mean":0.6770461309523811,"min":0.6236160714285715,"max":0.7455803571428572,"std":0.03603519253298521},
+      "packet_component_accuracy": {"mean":0.9990234375,"min":0.994140625,"max":1.0,"std":0.0018699748198365979},
+      "packet_mean_margin_db": {"mean":9.106642777792755,"min":6.998805714900733,"max":10.28735315194363,"std":1.0757317245040035},
+      "packet_min_margin_db": {"mean":0.4578313275676742,"min":-0.9004511470128419,"max":1.851895225258562,"std":0.8394695562498501},
+      "packet_p05_margin_db": {"mean":1.6504364870788768,"min":0.16881618896672798,"max":3.1126452708832715,"std":0.9682907467518738}
+    },
+    "UNGATED_LOCAL": {
+      "heldout_accuracy": {"mean":0.9791666666666666,"min":0.75,"max":1.0,"std":0.06909634979907082},
+      "heldout_mean_margin_db": {"mean":13.964406837192842,"min":9.861415445171296,"max":15.833489341535804,"std":1.8693822640225746},
+      "heldout_min_margin_db": {"mean":2.82837075066314,"min":-5.12037620340192,"max":9.075445397788076,"std":3.3913602403127756},
+      "active_fraction": {"mean":1.0,"min":1.0,"max":1.0,"std":0.0},
+      "packet_component_accuracy": {"mean":0.979736328125,"min":0.7666015625,"max":1.0,"std":0.0642989655869783},
+      "packet_mean_margin_db": {"mean":9.50227097432177,"min":6.962891509977326,"max":11.54526870970429,"std":1.090666770543333},
+      "packet_min_margin_db": {"mean":0.823903064998691,"min":-5.668225914364022,"max":5.287273738687342,"std":2.782660870824179},
+      "packet_p05_margin_db": {"mean":2.4781215910954204,"min":-5.32405494013834,"max":6.269776349185041,"std":2.7486844872610416}
+    },
+    "SHUFFLED_TRAFFIC": {
+      "heldout_accuracy": {"mean":0.9354166666666667,"min":0.75,"max":1.0,"std":0.10726638051546668},
+      "heldout_mean_margin_db": {"mean":12.248915890417836,"min":10.296013899862828,"max":14.315259209621297,"std":1.3321721022302098},
+      "heldout_min_margin_db": {"mean":1.117190782973553,"min":-1.3605446369748337,"max":5.363740810835331,"std":1.7901401690899905},
+      "active_fraction": {"mean":0.6590066964285713,"min":0.5504017857142857,"max":0.7250446428571429,"std":0.056195773905602514},
+      "packet_component_accuracy": {"mean":0.9419759114583334,"min":0.7490234375,"max":1.0,"std":0.10122818003988389},
+      "packet_mean_margin_db": {"mean":8.454062054552917,"min":6.060642624790052,"max":9.960929945048537,"std":1.211664476013534},
+      "packet_min_margin_db": {"mean":0.4955312402782672,"min":-1.2195037720455941,"max":2.058866615011797,"std":1.0292557262722257},
+      "packet_p05_margin_db": {"mean":1.5518935445929696,"min":-1.0710601453873114,"max":3.4498118093244057,"std":1.4064453407892163}
+    },
+    "SHUFFLED_PULSE": {
+      "heldout_accuracy": {"mean":0.6437499999999999,"min":0.4125,"max":1.0,"std":0.19199473734107053},
+      "heldout_mean_margin_db": {"mean":2.895210493515014,"min":-3.2546051996173544e-16,"max":9.364718573338845,"std":3.0659010780014553},
+      "heldout_min_margin_db": {"mean":-2.0315107836892383,"min":-9.749421297390327,"max":2.733888514085982,"std":3.188060182027188},
+      "active_fraction": {"mean":0.60875,"min":0.5308928571428572,"max":0.6912053571428571,"std":0.05046949535843105},
+      "packet_component_accuracy": {"mean":0.6477864583333334,"min":0.263671875,"max":0.9267578125,"std":0.15756351650148387},
+      "packet_mean_margin_db": {"mean":1.774718101171772,"min":6.309564478424825e-16,"max":4.9497924509336455,"std":1.7466646510777284},
+      "packet_min_margin_db": {"mean":-3.0216492859135236,"min":-9.69798538189687,"max":-2.410818666383218e-15,"std":2.9539427511306995},
+      "packet_p05_margin_db": {"mean":-2.4106697690070225,"min":-9.42123291424862,"max":-9.643274665532871e-16,"std":2.7945705619202297}
+    }
+  },
+  "best_traffic_gated_seed": {
+    "seed": 11,
+    "active_fraction": 0.6424107142857143,
+    "steady_accuracy": 1.0,
+    "steady_mean_margin_db": 12.011092986561717,
+    "steady_min_margin_db": 1.4206443337890535,
+    "packet_component_accuracy": 1.0,
+    "packet_mean_margin_db": 7.248933770888429,
+    "packet_min_margin_db": 1.851895225258562,
+    "packet_p05_margin_db": 2.3663310810557108,
+    "couplings": [1.8375935889409114,1.5916813936461207,1.5103544523059471,0.9619568010573456,0.1595496032509705,0.4920131004736038,0.44685106032510064],
+    "clock_mass": [2.7441156567514415,0.750925972836138,0.5744979307001364,0.6680018832779864,0.8330597383237289,0.8324161817163158,0.5969826363942521]
+  },
+  "scope": "Locality means parameter-specific eligibility and traffic are local; a scalar consequence and resource homeostat remain global. Digital and synchronized. Not a biological-plasticity claim."
+}
