@@ -95,6 +95,53 @@ Classification:
 
 Receipt: [`results/GATE0.json`](results/GATE0.json)
 
+## Gate 1 — frozen body, finite packet mixtures
+
+Gate 1 does **not** retrain the body.
+
+Every arm is first trained exactly as Gate 0: four pure steady sinusoids only. Then its structure is frozen.
+
+The held-out world contains **512 mixtures**. Every mixture contains two finite Gaussian-windowed packets:
+
+```text
+one carrier from the UPPER family: 0.55 or 1.15 +/- 0.025
+one carrier from the LOWER family: 0.85 or 1.45 +/- 0.025
+```
+
+Amplitude, phase, packet width, center time, and relative onset are randomized. The two packet centers can be up to 20 time units apart.
+
+The full output waveform is synthesized through the same fixed linear body. Each component is scored by narrow-band energy at the intended versus wrong output.
+
+That means Gate 1 asks:
+
+> **Did the body trained on isolated tones learn only four points, or did it become a medium that also separates unseen finite mixtures?**
+
+### Gate 1 result
+
+12 frozen bodies per arm, 512 mixtures = 1,024 routed components per body:
+
+| frozen body | component accuracy | mean margin | mean 5th-percentile margin |
+|---|---:|---:|---:|
+| uniform | 50.00% | ~0 dB | ~0 dB |
+| SPACE_ONLY | 81.18% | 6.52 dB | -0.20 dB |
+| CLOCK_ONLY | 74.90% | 7.77 dB | -1.32 dB |
+| **SPACE_CLOCK** | **94.24%** | **9.67 dB** | **+1.61 dB** |
+| shuffled-consequence training | 77.87% | 3.45 dB | -2.19 dB |
+
+A best joint seed routes **all 1,024 held-out packet components correctly**, with worst component margin **+4.51 dB**.
+
+No Gate-1 optimization was allowed.
+
+Classification:
+
+> `FROZEN_SPACE_CLOCK_BODY_SEPARATES_UNSEEN_PACKET_MIXTURES`
+
+Receipt: [`results/GATE1.json`](results/GATE1.json) · [experiment](gate1_packets.py) · [live packet demo](../packets.html)
+
+This is stronger than Gate 0 in one narrow way: the useful object is no longer merely a lookup-like set of four resonances. The same passive body handles **superposed finite signals with unseen phases, amplitudes, widths, offsets, and nearby frequencies**.
+
+The boundary remains important: linear superposition and spectral separation are doing the heavy lifting. This is not blind source separation or semantic routing.
+
 ## What this means
 
 In this toy:
@@ -128,8 +175,6 @@ The useful question is whether the architecture buys anything when the signal it
 
 ## Next gates
 
-**Gate 1 — time domain.** Launch finite packets instead of solving steady sinusoids. Require successful routing under onset, offset, and mixtures.
-
 **Gate 2 — local plasticity.** Replace external SPSA parameter updates with local traffic traces plus one global scalar consequence.
 
 **Gate 3 — memory.** Let repeated traffic slowly change `g` and `m`; test whether yesterday's signals reshape tomorrow's routes.
@@ -140,6 +185,7 @@ The useful question is whether the architecture buys anything when the signal it
 
 ```bash
 python physics_router/experiment.py
+python physics_router/gate1_packets.py
 ```
 
 **Body first. Router never. Claims last.**
