@@ -1,0 +1,147 @@
+{
+  "gate": 1,
+  "classification": "FROZEN_SPACE_CLOCK_BODY_SEPARATES_UNSEEN_PACKET_MIXTURES",
+  "passed": true,
+  "training": {
+    "gate1_retraining": false,
+    "gate0_training_only": "four pure steady sinusoids at 0.55, 0.85, 1.15, 1.45 rad/s",
+    "gate0_scalar_optimizer": "SPSA",
+    "seeds": 12,
+    "gate0_updates_per_seed": 1600
+  },
+  "heldout_packet_world": {
+    "mixtures": 512,
+    "components_scored": 1024,
+    "mixture_seed": 20260903,
+    "frequency_jitter_rad_per_s": 0.025,
+    "amplitude_range": [0.6, 1.4],
+    "packet_center_range": [28.0, 48.0],
+    "relative_center_offset_range": [-10.0, 10.0],
+    "gaussian_sigma_range": [6.0, 11.0],
+    "phase_range_rad": [0.0, 6.283185307179586],
+    "band_half_width_rad_per_s": 0.11,
+    "dt": 0.1,
+    "samples": 2048
+  },
+  "measurement": "For each finite two-packet mixture, synthesize full output waveforms through the fixed LTI body; for each component, compare narrow-band energy at its intended versus wrong output.",
+  "aggregate": {
+    "SPACE_ONLY": {
+      "component_accuracy": {
+        "mean": 0.811767578125,
+        "min": 0.7490234375,
+        "max": 1.0,
+        "std": 0.10867603943974645
+      },
+      "mean_margin_db": {
+        "mean": 6.515180483860852,
+        "min": 5.431295154258096,
+        "max": 7.2248715461634685,
+        "std": 0.5184256024055487
+      },
+      "min_component_margin_db": {
+        "mean": -0.5103991956578443,
+        "min": -1.4148418769440185,
+        "max": 0.3635723136483303,
+        "std": 0.6290476206728242
+      },
+      "p05_margin_db": {
+        "mean": -0.19618687214754038,
+        "min": -0.8259387800323094,
+        "max": 0.6220974902213844,
+        "std": 0.5102408156850509
+      }
+    },
+    "CLOCK_ONLY": {
+      "component_accuracy": {
+        "mean": 0.7490234375,
+        "min": 0.7490234375,
+        "max": 0.7490234375,
+        "std": 0.0
+      },
+      "mean_margin_db": {
+        "mean": 7.768487336798162,
+        "min": 6.373236952024515,
+        "max": 10.098301168747088,
+        "std": 1.200054275038061
+      },
+      "min_component_margin_db": {
+        "mean": -1.5111416919829141,
+        "min": -3.169481024268857,
+        "max": -0.9083630307504642,
+        "std": 0.7415768518173289
+      },
+      "p05_margin_db": {
+        "mean": -1.3173348651065029,
+        "min": -2.8335946178898714,
+        "max": -0.7575957762579599,
+        "std": 0.6800141270770386
+      }
+    },
+    "SPACE_CLOCK": {
+      "component_accuracy": {
+        "mean": 0.9423828125,
+        "min": 0.7490234375,
+        "max": 1.0,
+        "std": 0.0969186007918158
+      },
+      "mean_margin_db": {
+        "mean": 9.669988833923691,
+        "min": 6.697905591175204,
+        "max": 14.924197169070066,
+        "std": 2.0411109672384757
+      },
+      "min_component_margin_db": {
+        "mean": -0.0538047331975948,
+        "min": -7.11224080919973,
+        "max": 4.512720161443397,
+        "std": 3.007920942987431
+      },
+      "p05_margin_db": {
+        "mean": 1.607418344121703,
+        "min": -2.683571208283583,
+        "max": 7.107096275606717,
+        "std": 2.805932323761586
+      }
+    },
+    "SHUFFLED_CONSEQUENCE": {
+      "component_accuracy": {
+        "mean": 0.7787272135416666,
+        "min": 0.392578125,
+        "max": 1.0,
+        "std": 0.1562141165325462
+      },
+      "mean_margin_db": {
+        "mean": 3.445177332734947,
+        "min": 0.43055429919455457,
+        "max": 7.352761996782874,
+        "std": 2.0365513042551817
+      },
+      "min_component_margin_db": {
+        "mean": -2.9100304868174907,
+        "min": -5.512455103432343,
+        "max": 0.43811051696157377,
+        "std": 2.03442319510215
+      },
+      "p05_margin_db": {
+        "mean": -2.1890667458594866,
+        "min": -4.71578288281432,
+        "max": 0.764700272620555,
+        "std": 1.9048397294379544
+      }
+    }
+  },
+  "uniform_body": {
+    "component_accuracy": 0.5,
+    "mean_margin_db": 6.309564478424825e-16,
+    "min_component_margin_db": -2.410818666383218e-15,
+    "p05_margin_db": -9.643274665532871e-16
+  },
+  "best_joint_seed": {
+    "seed": 5,
+    "component_accuracy": 1.0,
+    "mean_margin_db": 11.571934007956877,
+    "min_component_margin_db": 4.512720161443397,
+    "p05_margin_db": 6.113689181668602
+  },
+  "scope": "The mixture components are distinguished by carrier frequency. This demonstrates passive spectral separation of finite packets by a body trained only on pure tones. It does not establish semantic routing, nonlinear source separation, or computational savings on digital hardware."
+}
