@@ -42,6 +42,8 @@ from experiment import (
     N,
     TRAIN_FREQS,
     TRAIN_TARGETS,
+    TEST_FREQS,
+    TEST_TARGETS,
     decode,
     measure,
     response,
@@ -284,7 +286,11 @@ def evaluate_arm(rows, mixtures):
                 np.log(row["clock_mass"]),
             ]
         )
-        steady.append(measure(z, "both"))
+        steady.append(
+            measure(
+                z, "both", TEST_FREQS, TEST_TARGETS
+            )
+        )
         packet.append(
             evaluate_body(
                 row["couplings"],
