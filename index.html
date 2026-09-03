@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Clockfield × Geometric Synapse — Physics Router</title>
+<style>
+:root{--bg:#061014;--panel:#09171b;--line:#28464d;--text:#d9ece8;--muted:#89a49e;--lime:#c7ff57;--cyan:#66fbd1;--pink:#ff547f;--amber:#ffc857}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% -20%,#17343d,#061014 50%);color:var(--text);font-family:ui-monospace,monospace}
+main{max-width:1180px;margin:auto;padding:42px 20px 70px}.tag{color:var(--cyan);font-size:11px;letter-spacing:.18em}h1{font:760 clamp(40px,6vw,76px)/.97 system-ui;letter-spacing:-.045em;margin:10px 0 18px}h1 em{color:var(--lime);font-style:normal}.lead{max-width:900px;font:18px/1.6 system-ui;color:#aec3be}.grid{display:grid;grid-template-columns:1.45fr 1fr;gap:16px;margin-top:25px}.card{background:rgba(8,21,25,.93);border:1px solid var(--line);padding:16px}canvas{width:100%;height:auto;background:#051014;border:1px solid #173039}select,input,button{font:700 12px ui-monospace,monospace}.control{display:grid;grid-template-columns:130px 1fr 74px;gap:10px;align-items:center;margin:12px 0}input[type=range]{width:100%}select{background:#10262b;color:var(--text);border:1px solid #31545c;padding:10px}.metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px}.m{border:1px solid #1c363d;padding:12px}.m span{display:block;font-size:9px;color:var(--muted);letter-spacing:.08em}.m strong{display:block;font-size:25px;color:var(--lime);margin-top:5px}.m.upper strong{color:var(--cyan)}.m.lower strong{color:var(--pink)}.bar{height:18px;border:1px solid #24444b;background:#0c2025;margin:7px 0 13px;position:relative}.bar i{display:block;height:100%;width:0}.upperbar i{background:linear-gradient(90deg,#1b5b67,var(--cyan))}.lowerbar i{background:linear-gradient(90deg,#6b1d3a,var(--pink))}.eq{margin:16px 0;padding:12px 14px;border-left:3px solid var(--cyan);background:#08171a;color:var(--cyan);font-size:16px}.note{font:14px/1.6 system-ui;color:#91aaa5}.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:10px;margin:8px 0}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}.receipt{border-top:1px solid #24434a;margin-top:16px;padding-top:12px}a{color:var(--cyan)}@media(max-width:820px){.grid{grid-template-columns:1fr}.control{grid-template-columns:100px 1fr 64px}}
+</style>
+</head>
+<body>
+<main>
+<div class="tag">CLOCKFIELD × OUTOSYNAPSI / PHYSICS ROUTER GATE 0</div>
+<h1>No router chooses the branch. <em>The body does.</em></h1>
+<p class="lead">Edge coupling shapes space. Node inertia sets a local clock scale. The same fixed seven-node body sees every signal; its resonances decide which output receives more energy.</p>
+
+<div class="grid">
+<section class="card">
+<canvas id="cv" width="720" height="500"></canvas>
+<div class="control"><label>MEDIUM</label><select id="mode">
+<option value="both" selected>SPACE + CLOCK</option>
+<option value="space">SPACE ONLY</option>
+<option value="clock">CLOCK ONLY</option>
+<option value="uniform">UNIFORM</option>
+</select><span></span></div>
+<div class="control"><label>FREQUENCY</label><input id="freq" type="range" min="0.48" max="1.50" step="0.002" value="0.55"><strong id="fval">0.550</strong></div>
+<p class="note">Training targets alternate: <b>0.55 → upper</b>, <b>0.85 → lower</b>, <b>1.15 → upper</b>, <b>1.45 → lower</b>. Move between them and watch the fixed medium reroute by resonance.</p>
+</section>
+
+<aside class="card">
+<div class="metrics">
+<div class="m upper"><span>UPPER OUTPUT POWER</span><strong id="up">—</strong></div>
+<div class="m lower"><span>LOWER OUTPUT POWER</span><strong id="lo">—</strong></div>
+<div class="m"><span>ROUTING MARGIN</span><strong id="margin">—</strong></div>
+<div class="m"><span>WINNER</span><strong id="winner">—</strong></div>
+</div>
+<p class="note">Upper</p><div class="bar upperbar"><i id="ub"></i></div>
+<p class="note">Lower</p><div class="bar lowerbar"><i id="lb"></i></div>
+<div class="eq">M x¨ + γ x˙ + [L(g)+κI]x = b u(t)</div>
+<p class="note"><b>g</b> = edge coupling / spatial stiffness.<br><b>m</b> = node inertia / clock mass.<br><b>N = 1/√m</b> = local clock scale.</p>
+<div class="receipt"><p class="note"><b>12-seed receipt:</b><br>
+SPACE ONLY: 81.25% held-out<br>
+CLOCK ONLY: 75.00%<br>
+<b style="color:var(--lime)">SPACE + CLOCK: 93.75%</b><br>
+joint mean worst-frequency margin: <b style="color:var(--lime)">+3.30 dB</b>.</p></div>
+</aside>
+</div>
+
+<p class="note">Boundary: frequency is signal content, not semantics. “Clock mass” is oscillator inertia, not gravitational mass. This browser computes a linear-wave response; on a GPU the physics is simulated, not free. <a href="physics_router/README.md">method + claims</a> · <a href="physics_router/results/GATE0.json">receipt</a> · <a href="https://github.com/anttiluode/ClockfieldUnified">source</a></p>
+</main>
+
+<script>
+(() => {
+const N=7, edges=[[0,1],[1,2],[2,5],[0,3],[3,4],[4,6],[2,4]], ground=.25, damping=.08, source=0, upper=5, lower=6;
+const media={
+both:{g:[.97721089,.29885787,.82521142,3.2044215,.70818811,.73269649,.25341371],m:[.13048978,1.13277136,1.79027673,.60275705,.97198893,1.53999315,.83172301]},
+space:{g:[.54933974,.64689535,.81034854,1.25138003,2.34772211,1.21151262,.18280163],m:[1,1,1,1,1,1,1]},
+clock:{g:[1,1,1,1,1,1,1],m:[1.4019255,1.80436683,.16842489,.16688461,1.45399636,.94370614,1.06069567]},
+uniform:{g:[1,1,1,1,1,1,1],m:[1,1,1,1,1,1,1]}
+};
+const pos=[[90,250],[230,130],[390,105],[230,370],[390,395],[620,120],[620,380]];
+
+function add(a,b){return [a[0]+b[0],a[1]+b[1]]}
+function sub(a,b){return [a[0]-b[0],a[1]-b[1]]}
+function mul(a,b){return [a[0]*b[0]-a[1]*b[1],a[0]*b[1]+a[1]*b[0]]}
+function div(a,b){const d=b[0]*b[0]+b[1]*b[1];return [(a[0]*b[0]+a[1]*b[1])/d,(a[1]*b[0]-a[0]*b[1])/d]}
+function abs2(a){return a[0]*a[0]+a[1]*a[1]}
+
+function solve(A,b){
+  A=A.map(r=>r.map(z=>[z[0],z[1]])); b=b.map(z=>[z[0],z[1]]);
+  for(let k=0;k<N;k++){
+    let p=k,best=abs2(A[k][k]);for(let i=k+1;i<N;i++){const q=abs2(A[i][k]);if(q>best){best=q;p=i}}
+    [A[k],A[p]]=[A[p],A[k]];[b[k],b[p]]=[b[p],b[k]];
+    for(let i=k+1;i<N;i++){
+      const f=div(A[i][k],A[k][k]);
+      for(let j=k;j<N;j++)A[i][j]=sub(A[i][j],mul(f,A[k][j]));
+      b[i]=sub(b[i],mul(f,b[k]));
+    }
+  }
+  const x=Array.from({length:N},()=>[0,0]);
+  for(let i=N-1;i>=0;i--){
+    let s=b[i];for(let j=i+1;j<N;j++)s=sub(s,mul(A[i][j],x[j]));
+    x[i]=div(s,A[i][i]);
+  }
+  return x;
+}
+function response(med,w){
+  const K=Array.from({length:N},(_,i)=>Array.from({length:N},(_,j)=>i===j?ground:0));
+  med.g.forEach((g,e)=>{const [i,j]=edges[e];K[i][i]+=g;K[j][j]+=g;K[i][j]-=g;K[j][i]-=g});
+  const A=Array.from({length:N},(_,i)=>Array.from({length:N},(_,j)=>[K[i][j]-(i===j?w*w*med.m[i]:0),i===j?w*damping:0]));
+  const b=Array.from({length:N},()=>[0,0]);b[source]=[1,0];
+  return solve(A,b);
+}
+function draw(med,x){
+ const cv=document.getElementById('cv'),c=cv.getContext('2d');c.clearRect(0,0,cv.width,cv.height);
+ med.g.forEach((g,e)=>{const [i,j]=edges[e];c.strokeStyle='#31535b';c.lineWidth=1+2.4*g;c.beginPath();c.moveTo(...pos[i]);c.lineTo(...pos[j]);c.stroke()});
+ for(let i=0;i<N;i++){
+   const p=abs2(x[i]),r=5+Math.min(27,7*Math.sqrt(p)),clock=1/Math.sqrt(med.m[i]);
+   c.fillStyle=i===source?'#ffc857':i===upper?'#66fbd1':i===lower?'#ff547f':'#a4bab5';
+   c.globalAlpha=.28+Math.min(.72,.18*Math.sqrt(p));c.beginPath();c.arc(pos[i][0],pos[i][1],r,0,7);c.fill();c.globalAlpha=1;
+   c.strokeStyle='#c7ff57';c.lineWidth=1;c.beginPath();c.arc(pos[i][0],pos[i][1],5+10/Math.max(.45,clock),0,7);c.stroke();
+   c.fillStyle='#d9ece8';c.font='10px ui-monospace';c.fillText('N='+clock.toFixed(2),pos[i][0]-21,pos[i][1]+42);
+ }
+ c.fillStyle='#89a49e';c.font='11px ui-monospace';c.fillText('INPUT',55,300);c.fillText('UPPER',595,75);c.fillText('LOWER',595,445);
+}
+function update(){
+ const w=Number(freq.value),med=media[mode.value],x=response(med,w),pu=abs2(x[upper]),pl=abs2(x[lower]),max=Math.max(pu,pl,1e-12);
+ fval.textContent=w.toFixed(3);up.textContent=pu.toFixed(3);lo.textContent=pl.toFixed(3);
+ const db=10*Math.log10((Math.max(pu,pl)+1e-12)/(Math.min(pu,pl)+1e-12));
+ margin.textContent=db.toFixed(1)+' dB';winner.textContent=pu>=pl?'UPPER':'LOWER';
+ ub.style.width=(100*pu/max).toFixed(1)+'%';lb.style.width=(100*pl/max).toFixed(1)+'%';draw(med,x);
+}
+freq.oninput=update;mode.onchange=update;update();
+})();
+</script>
+</body>
+</html>
