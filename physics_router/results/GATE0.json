@@ -1,0 +1,62 @@
+{
+  "gate": 0,
+  "classification": "SPACE_AND_LOCAL_TIME_JOINTLY_SUPPORT_FREQUENCY_ROUTING",
+  "passed": true,
+  "body": {
+    "nodes": 7,
+    "edges": [[0,1],[1,2],[2,5],[0,3],[3,4],[4,6],[2,4]],
+    "equation": "M x_ddot + gamma x_dot + (L(g)+kappa I)x = b u",
+    "ground_stiffness": 0.25,
+    "damping": 0.08,
+    "edge_budget": 7,
+    "mass_budget": 7,
+    "clock_definition": "N_i = 1/sqrt(m_i)"
+  },
+  "task": {
+    "train_frequencies": [0.55,0.85,1.15,1.45],
+    "train_destinations": ["upper","lower","upper","lower"],
+    "heldout_frequencies": 80,
+    "heldout_rule": "+/- 0.025 neighborhoods excluding train centers"
+  },
+  "learning": {
+    "algorithm": "SPSA with Adam-like moment smoothing",
+    "seeds": 12,
+    "updates_per_seed": 1600,
+    "plus_minus_scalar_consequence_pairs_per_seed": 1600,
+    "gradient_access": false,
+    "per_input_router": false
+  },
+  "aggregate": {
+    "SPACE_ONLY": {
+      "train_accuracy": {"mean":0.8125,"min":0.75,"max":1.0,"std":0.10825317547305482},
+      "heldout_accuracy": {"mean":0.8125,"min":0.75,"max":1.0,"std":0.10825317547305482},
+      "heldout_mean_margin_db": {"mean":9.441919215235743,"min":5.875950502125839,"max":11.708305639690163,"std":1.2984113974504838},
+      "heldout_min_margin_db": {"mean":-0.46697285453041926,"min":-1.5682470256301941,"max":0.6018126059742183,"std":0.7657686532750546}
+    },
+    "CLOCK_ONLY": {
+      "train_accuracy": {"mean":0.75,"min":0.75,"max":0.75,"std":0.0},
+      "heldout_accuracy": {"mean":0.75,"min":0.75,"max":0.75,"std":0.0},
+      "heldout_mean_margin_db": {"mean":11.471183598147618,"min":9.57040871193249,"max":14.707229113251998,"std":1.460147980966653},
+      "heldout_min_margin_db": {"mean":-1.7673589463159434,"min":-3.7243379640484964,"max":-1.0712648537709846,"std":0.8769139270960095}
+    },
+    "SPACE_CLOCK": {
+      "train_accuracy": {"mean":0.9375,"min":0.75,"max":1.0,"std":0.10825317547305482},
+      "heldout_accuracy": {"mean":0.9375,"min":0.75,"max":1.0,"std":0.09669001154893576},
+      "heldout_mean_margin_db": {"mean":14.06813813522043,"min":9.34170634342338,"max":21.52370510531104,"std":2.874114650437859},
+      "heldout_min_margin_db": {"mean":3.2962570917014635,"min":-1.3376112328669143,"max":12.712646461391937,"std":4.3024467049608655}
+    },
+    "SHUFFLED_CONSEQUENCE": {
+      "heldout_accuracy": {"mean":0.775,"min":0.5,"max":1.0,"std":0.11803512895179412},
+      "heldout_mean_margin_db": {"mean":5.051108018508576,"min":1.8158582246052355,"max":10.267338228553085,"std":2.230645072992886},
+      "heldout_min_margin_db": {"mean":-2.3564922888707613,"min":-5.408305738731838,"max":0.4484981146331859,"std":1.9199446409159582}
+    }
+  },
+  "representative_joint_seed_3": {
+    "heldout_accuracy": 1.0,
+    "heldout_mean_margin_db": 21.52370510531104,
+    "heldout_min_margin_db": 12.712646461391937,
+    "couplings": [0.97721089,0.29885787,0.82521142,3.2044215,0.70818811,0.73269649,0.25341371],
+    "clock_mass": [0.13048978,1.13277136,1.79027673,0.60275705,0.97198893,1.53999315,0.83172301]
+  },
+  "scope": "Frequency is signal content, not semantics. Clock mass is oscillator inertia/time-scale, not gravitational mass. The digital simulation pays for its matrix solves. An explicit digital frequency router solves this toy task trivially."
+}
