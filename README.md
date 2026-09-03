@@ -41,8 +41,11 @@ So the same learned medium extends from isolated tones to superposed transient p
 
 This is **physics-routed computation in a simulated resonant medium**, not free computation on a GPU and not gravitational attention.
 
+Gate 2 distributes the learning update itself: local traffic gates local perturbation eligibility, one scalar global consequence is broadcast, and each structural element changes only its own parameter. Traffic-gated local plasticity reaches **99.90%** finite-packet component accuracy while activating **67.70%** of parameters per update.
+
 - [live steady-state demo](index.html)
 - [live finite-packet demo](packets.html)
+- [live local-plasticity demo](plasticity.html)
 - [experiment](physics_router/experiment.py)
 - [receipt](physics_router/results/GATE0.json)
 - [method and boundaries](physics_router/README.md)
