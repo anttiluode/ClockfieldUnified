@@ -10,6 +10,33 @@
 
 ---
 
+## Computational offshoot — Physics Router
+
+September 3, 2026 added an executable AI-side test of one narrow Clockfield idea:
+
+> **edge coupling shapes space; local inertia shapes time; can one fixed body route different signal frequencies without an input-dependent router?**
+
+The experiment is intentionally separated from the toy-gravity claims below. It uses no Einstein dynamics. A seven-node damped wave medium learns edge couplings `g_e` and/or node clock masses `m_i`, with local clock scale `N_i=1/sqrt(m_i)`.
+
+Across 12 equal-budget scalar SPSA runs:
+
+```text
+SPACE_ONLY      81.25% held-out routing
+CLOCK_ONLY      75.00%
+SPACE_CLOCK     93.75%
+```
+
+The joint medium is the only arm with positive mean worst-frequency routing margin (+3.30 dB). Training receives only paired scalar task consequences from parameter perturbations; there is no per-input branch selector.
+
+This is **physics-routed computation in a simulated resonant medium**, not free computation on a GPU and not gravitational attention.
+
+- [live demo](index.html)
+- [experiment](physics_router/experiment.py)
+- [receipt](physics_router/results/GATE0.json)
+- [method and boundaries](physics_router/README.md)
+
+---
+
 ## 0. Verdict up front
 
 Two research programs that looked like successive drafts of one theory turn out to be two halves of one theory. The **old Clockfield** (2024–25) — a 6D Kaluza–Klein toy GUT with a dilaton Ψ that slows local wave speed — supplies a *microscopic mechanism*: how a patch of a nonlinear medium falls out of time. The **new Clockfield** (the Γ-shell framework behind SimpsonsUniverse) supplies the *macroscopic geometry*: what the frozen phase looks like, and what happens at its boundary. Neither document knew it was half of the other. The seam is a single sentence in the old program's own retrospective, and this paper is built on that seam.
