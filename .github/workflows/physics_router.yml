@@ -1,0 +1,25 @@
+name: physics-router
+
+on:
+  push:
+    paths:
+      - "physics_router/**"
+      - ".github/workflows/physics_router.yml"
+  pull_request:
+    paths:
+      - "physics_router/**"
+      - ".github/workflows/physics_router.yml"
+  workflow_dispatch:
+
+jobs:
+  gate0:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install NumPy
+        run: python -m pip install "numpy>=2.0"
+      - name: Run physics-router Gate 0
+        run: python physics_router/experiment.py
