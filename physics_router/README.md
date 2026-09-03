@@ -142,6 +142,72 @@ This is stronger than Gate 0 in one narrow way: the useful object is no longer m
 
 The boundary remains important: linear superposition and spectral separation are doing the heavy lifting. This is not blind source separation or semantic routing.
 
+## Gate 2 — local eligibility + global pulse
+
+Gate 0 used SPSA as an external optimizer. Gate 2 rewrites that update as a distributed three-factor rule.
+
+Each structural element has only:
+
+```text
+its local traffic trace
+its own private perturbation sign
+the one global scalar consequence pulse
+its own parameter + local optimizer state
+```
+
+Local traces are:
+
+```text
+edge e=(i,j): mean |x_i - x_j|^2
+node i:       mean omega^2 |x_i|^2
+```
+
+Traffic controls how often each local element becomes eligible:
+
+```text
+P(eligible_i) = 0.4 + 0.6 * normalized_local_traffic_i
+```
+
+Eligible units remember an independent local +/- perturbation sign. The whole body is evaluated twice, once with all local signs positive and once negative. Only the scalar loss difference is broadcast:
+
+```text
+global pulse = (L_plus - L_minus) / (2 epsilon)
+
+local update_i
+  = global pulse * stored_eligibility_i
+```
+
+The edge budget and clock-mass budget are maintained by one global homeostat.
+
+This is closely related to simultaneous perturbation / node perturbation / three-factor learning. The point is architectural locality, not new optimizer mathematics.
+
+### Gate 2 result
+
+12 seeds, 1,600 local updates per seed:
+
+| plasticity rule | steady held-out accuracy | finite-packet accuracy | active parameters / update |
+|---|---:|---:|---:|
+| **traffic-gated local** | **97.50%** | **99.90%** | **67.70%** |
+| ungated local | 97.92% | 97.97% | 100% |
+| shuffled traffic addresses | 93.54% | 94.20% | 65.90% |
+| shuffled global pulse | 64.37% | 64.78% | 60.88% |
+
+For the traffic-gated local learner, mean 5th-percentile packet margin is **+1.65 dB**. Shuffling the global consequence drives it to **-2.41 dB**.
+
+A representative locally trained seed routes all 1,024 held-out packet components correctly while activating only 64.24% of the structural parameters per update on average.
+
+Classification:
+
+> `LOCAL_ELIGIBILITY_PLUS_GLOBAL_PULSE_TRAINS_ROUTING_BODY`
+
+Receipt: [`results/GATE2.json`](results/GATE2.json) · [experiment](gate2_local_plasticity.py) · [live plasticity demo](../plasticity.html)
+
+The strongest narrow statement is now:
+
+> **local structural eligibility plus one broadcast scalar consequence is sufficient to train the same adaptive space+clock body.**
+
+The scalar pulse is still global, synchronized, and externally scored. This is not autonomous biological learning.
+
 ## What this means
 
 In this toy:
@@ -175,8 +241,6 @@ The useful question is whether the architecture buys anything when the signal it
 
 ## Next gates
 
-**Gate 2 — local plasticity.** Replace external SPSA parameter updates with local traffic traces plus one global scalar consequence.
-
 **Gate 3 — memory.** Let repeated traffic slowly change `g` and `m`; test whether yesterday's signals reshape tomorrow's routes.
 
 **Gate 4 — useful task.** Replace frequency labels with an actual signal-processing problem where physical filtering/routing is useful.
@@ -186,6 +250,7 @@ The useful question is whether the architecture buys anything when the signal it
 ```bash
 python physics_router/experiment.py
 python physics_router/gate1_packets.py
+python physics_router/gate2_local_plasticity.py
 ```
 
 **Body first. Router never. Claims last.**
