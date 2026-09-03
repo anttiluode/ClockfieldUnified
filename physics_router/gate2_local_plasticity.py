@@ -160,21 +160,22 @@ def train_local(
             edge_probability = np.ones(E, dtype=float)
             node_probability = np.ones(N, dtype=float)
 
-        edge_eligible = (
+        # Each local element first chooses its private perturbation sign,
+        # then its traffic-gated eligibility.  This ordering is fixed for
+        # deterministic receipts.
+        edge_sign = rng.choice(
+            np.asarray([-1.0, 1.0]), size=E
+        )
+        edge_sign *= (
             rng.random(E) < edge_probability
         ).astype(float)
-        node_eligible = (
+
+        node_sign = rng.choice(
+            np.asarray([-1.0, 1.0]), size=N
+        )
+        node_sign *= (
             rng.random(N) < node_probability
         ).astype(float)
-
-        edge_sign = (
-            rng.choice(np.asarray([-1.0, 1.0]), size=E)
-            * edge_eligible
-        )
-        node_sign = (
-            rng.choice(np.asarray([-1.0, 1.0]), size=N)
-            * node_eligible
-        )
 
         active += int(np.count_nonzero(edge_sign))
         active += int(np.count_nonzero(node_sign))
