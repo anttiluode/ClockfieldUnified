@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Physics Router Gate 2 — local eligibility, global pulse</title>
+<style>
+:root{--bg:#061014;--panel:#09171b;--line:#28464d;--text:#d9ece8;--muted:#89a49e;--lime:#c7ff57;--cyan:#66fbd1;--pink:#ff547f;--amber:#ffc857}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% -20%,#17343d,#061014 50%);color:var(--text);font-family:ui-monospace,monospace}
+main{max-width:1180px;margin:auto;padding:42px 20px 70px}.tag{color:var(--cyan);font-size:11px;letter-spacing:.18em}h1{font:760 clamp(40px,6vw,76px)/.97 system-ui;letter-spacing:-.045em;margin:10px 0 18px}h1 em{color:var(--lime);font-style:normal}.lead{max-width:920px;font:18px/1.6 system-ui;color:#aec3be}.grid{display:grid;grid-template-columns:1.5fr 1fr;gap:16px;margin-top:25px}.card{background:rgba(8,21,25,.93);border:1px solid var(--line);padding:16px}canvas{width:100%;height:auto;background:#051014;border:1px solid #173039}button{font:700 12px ui-monospace,monospace;padding:11px 14px;margin:8px 7px 4px 0;background:#10262b;color:var(--text);border:1px solid #31545c}button.primary{background:var(--lime);color:#071106;border-color:var(--lime)}button.bad{border-color:#6d2940;color:#ff9bb6}.metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px}.m{border:1px solid #1c363d;padding:12px}.m span{display:block;font-size:9px;color:var(--muted);letter-spacing:.08em}.m strong{display:block;font-size:24px;color:var(--lime);margin-top:5px}.pulse strong{color:var(--cyan)}.eq{margin:16px 0;padding:12px 14px;border-left:3px solid var(--cyan);background:#08171a;color:var(--cyan)}.note{font:14px/1.6 system-ui;color:#91aaa5}.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:10px;margin:9px 0}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}.log{height:170px;overflow:auto;background:#061115;border:1px solid #1b353b;padding:10px;color:#98ada8;font-size:11px;line-height:1.55}.receipt{border-top:1px solid #24434a;margin-top:14px;padding-top:12px}a{color:var(--cyan)}@media(max-width:820px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+<div class="tag">CLOCKFIELD × OUTOSYNAPSI / PHYSICS ROUTER GATE 2</div>
+<h1>Credit is local. <em>Consequence is one pulse.</em></h1>
+<p class="lead">Each edge and clock node sees only its own traffic, stores its own perturbation sign, and receives the same scalar task consequence. No parameter-specific gradient is broadcast.</p>
+<div class="grid">
+<section class="card">
+<canvas id="cv" width="740" height="500"></canvas>
+<button class="primary" id="run50">RUN 50 LOCAL UPDATES</button>
+<button id="one">ONE UPDATE</button>
+<button id="reset">RESET</button>
+<button class="bad" id="shuffle">SHUFFLE GLOBAL PULSE: OFF</button>
+<div class="legend">
+<span><i class="dot" style="background:#c7ff57"></i>eligible this update</span>
+<span><i class="dot" style="background:#66fbd1"></i>high local traffic</span>
+<span><i class="dot" style="background:#ff547f"></i>clock mass</span>
+</div>
+<p class="note">Edge width is coupling g. Node ring radius reflects clock mass m. Cyan intensity is the latest locally measured traffic. Lime marks which structural elements participated in the latest update.</p>
+<div class="log" id="log"></div>
+</section>
+<aside class="card">
+<div class="metrics">
+<div class="m"><span>UPDATES</span><strong id="updates">0</strong></div>
+<div class="m"><span>ACTIVE THIS UPDATE</span><strong id="active">—</strong></div>
+<div class="m pulse"><span>GLOBAL CONSEQUENCE PULSE</span><strong id="pulse">—</strong></div>
+<div class="m"><span>HELD-OUT ROUTING</span><strong id="acc">—</strong></div>
+<div class="m"><span>MEAN MARGIN</span><strong id="margin">—</strong></div>
+<div class="m"><span>CURRENT LOSS</span><strong id="loss">—</strong></div>
+</div>
+<div class="eq">Δθᵢ ∝ global_pulse × local_eligibilityᵢ</div>
+<p class="note"><b>Local trace:</b> edge strain |xᵢ−xⱼ|² or node inertial activity ω²|xᵢ|².<br><br><b>Eligibility:</b> traffic raises the probability that a local element perturbs and stores a sign.<br><br><b>Global channel:</b> only the paired scalar loss difference is broadcast.</p>
+<div class="receipt"><p class="note"><b>Committed 12-seed result:</b><br>traffic-gated local: <b style="color:var(--lime)">97.50%</b> steady routing<br>finite packets: <b style="color:var(--lime)">99.90%</b><br>active parameters/update: <b>67.70%</b><br>shuffled global pulse packet accuracy: <b>64.78%</b>.</p></div>
+</aside>
+</div>
+<p class="note">Boundary: this is a distributed simultaneous-perturbation / three-factor rule, not new optimizer mathematics. A scalar task evaluator and global budget homeostat remain. <a href="physics_router/results/GATE2.json">receipt</a> · <a href="physics_router/gate2_local_plasticity.py">executable assay</a> · <a href="packets.html">Gate 1 packets</a> · <a href="https://github.com/anttiluode/ClockfieldUnified">source</a></p>
+</main>
+<script>
+(() => {
+const N=7,E=7,edges=[[0,1],[1,2],[2,5],[0,3],[3,4],[4,6],[2,4]],source=0,upper=5,lower=6;
+const trainW=[.55,.85,1.15,1.45],trainT=[0,1,0,1],ground=.25,damping=.08;
+const testW=[],testT=[];for(let k=0;k<4;k++)for(let q=0;q<21;q++){const d=-.025+.05*q/20;if(Math.abs(d)<1e-12)continue;testW.push(trainW[k]+d);testT.push(trainT[k])}
+const pos=[[85,250],[230,115],[390,90],[230,385],[390,410],[650,110],[650,390]];
+let ze=new Float64Array(E),zm=new Float64Array(N),m1e=new Float64Array(E),m2e=new Float64Array(E),m1m=new Float64Array(N),m2m=new Float64Array(N);
+let trafficE=new Float64Array(E).fill(1),trafficM=new Float64Array(N).fill(1),eligE=new Float64Array(E),eligM=new Float64Array(N);
+let step=0,lastPulse=0,shufflePulse=false;
+function sub(a,b){return[a[0]-b[0],a[1]-b[1]]}function mul(a,b){return[a[0]*b[0]-a[1]*b[1],a[0]*b[1]+a[1]*b[0]]}function div(a,b){const d=b[0]*b[0]+b[1]*b[1];return[(a[0]*b[0]+a[1]*b[1])/d,(a[1]*b[0]-a[0]*b[1])/d]}function abs2(a){return a[0]*a[0]+a[1]*a[1]}
+function soft(z,total){let mx=Math.max(...z),a=Array.from(z,v=>Math.exp(v-mx)),s=a.reduce((x,y)=>x+y,0);return a.map(v=>total*v/s)}
+function body(e=ze,m=zm){return{g:soft(e,E),mass:soft(m,N)}}
+function K(g){const k=Array.from({length:N},(_,i)=>Array.from({length:N},(_,j)=>i===j?ground:0));g.forEach((x,e)=>{const[i,j]=edges[e];k[i][i]+=x;k[j][j]+=x;k[i][j]-=x;k[j][i]-=x});return k}
+function solve(A,b){A=A.map(r=>r.map(z=>[z[0],z[1]]));b=b.map(z=>[z[0],z[1]]);for(let k=0;k<N;k++){let p=k,best=abs2(A[k][k]);for(let i=k+1;i<N;i++){const q=abs2(A[i][k]);if(q>best){best=q;p=i}}[A[k],A[p]]=[A[p],A[k]];[b[k],b[p]]=[b[p],b[k]];for(let i=k+1;i<N;i++){const f=div(A[i][k],A[k][k]);for(let j=k;j<N;j++)A[i][j]=sub(A[i][j],mul(f,A[k][j]));b[i]=sub(b[i],mul(f,b[k]))}}const x=Array.from({length:N},()=>[0,0]);for(let i=N-1;i>=0;i--){let s=b[i];for(let j=i+1;j<N;j++)s=sub(s,mul(A[i][j],x[j]));x[i]=div(s,A[i][i])}return x}
+function resp(g,m,w){const k=K(g),A=Array.from({length:N},(_,i)=>Array.from({length:N},(_,j)=>[k[i][j]-(i===j?w*w*m[i]:0),i===j?w*damping:0])),b=Array.from({length:N},()=>[0,0]);b[source]=[1,0];return solve(A,b)}
+function taskLoss(e=ze,m=zm){const b=body(e,m);let L=0;for(let k=0;k<4;k++){const x=resp(b.g,b.mass,trainW[k]),u=abs2(x[upper]),l=abs2(x[lower]),d=trainT[k]===0?u:l,w=trainT[k]===0?l:u,lr=Math.log((d+1e-9)/(w+1e-9));L+=Math.log1p(Math.exp(1.8-lr))+.02/(d+.001)}return L/4}
+function localTraffic(){const b=body();trafficE.fill(0);trafficM.fill(0);for(const w of trainW){const x=resp(b.g,b.mass,w);for(let e=0;e<E;e++){const[i,j]=edges[e],dr=x[i][0]-x[j][0],di=x[i][1]-x[j][1];trafficE[e]+=(dr*dr+di*di)/4}for(let i=0;i<N;i++)trafficM[i]+=w*w*abs2(x[i])/4}let a=Math.max(...trafficE)+1e-12,bm=Math.max(...trafficM)+1e-12;for(let e=0;e<E;e++)trafficE[e]/=a;for(let i=0;i<N;i++)trafficM[i]/=bm}
+function clamp(v){return Math.max(-3,Math.min(3,v))}
+function oneUpdate(){
+ step++;if(step===1||step%10===0)localTraffic();
+ const se=new Float64Array(E),sm=new Float64Array(N);let act=0;
+ for(let e=0;e<E;e++){const sign=Math.random()<.5?-1:1,ok=Math.random()<.4+.6*trafficE[e];se[e]=ok?sign:0;eligE[e]=ok?1:0;if(ok)act++}
+ for(let i=0;i<N;i++){const sign=Math.random()<.5?-1:1,ok=Math.random()<.4+.6*trafficM[i];sm[i]=ok?sign:0;eligM[i]=ok?1:0;if(ok)act++}
+ const eps=.1/Math.pow(step,.101),ep=new Float64Array(E),em=new Float64Array(E),mp=new Float64Array(N),mm=new Float64Array(N);
+ for(let e=0;e<E;e++){ep[e]=clamp(ze[e]+eps*se[e]);em[e]=clamp(ze[e]-eps*se[e])}for(let i=0;i<N;i++){mp[i]=clamp(zm[i]+eps*sm[i]);mm[i]=clamp(zm[i]-eps*sm[i])}
+ let lp=taskLoss(ep,mp),lm=taskLoss(em,mm);if(shufflePulse&&Math.random()<.5){const q=lp;lp=lm;lm=q}
+ lastPulse=(lp-lm)/(2*eps);const lr=.02/(1+.0005*step);
+ for(let e=0;e<E;e++){const gr=lastPulse*se[e];m1e[e]=.9*m1e[e]+.1*gr;m2e[e]=.999*m2e[e]+.001*gr*gr;ze[e]-=lr*m1e[e]/(Math.sqrt(m2e[e])+1e-8)}
+ for(let i=0;i<N;i++){const gr=lastPulse*sm[i];m1m[i]=.9*m1m[i]+.1*gr;m2m[i]=.999*m2m[i]+.001*gr*gr;zm[i]-=lr*m1m[i]/(Math.sqrt(m2m[i])+1e-8)}
+ let me=ze.reduce((a,b)=>a+b,0)/E,mmn=zm.reduce((a,b)=>a+b,0)/N;for(let e=0;e<E;e++)ze[e]=clamp(ze[e]-me);for(let i=0;i<N;i++)zm[i]=clamp(zm[i]-mmn);
+ document.getElementById('active').textContent=act+'/'+(E+N);document.getElementById('pulse').textContent=lastPulse.toFixed(3);document.getElementById('updates').textContent=step;document.getElementById('log').innerHTML='<div>'+String(step).padStart(4,'0')+'  active '+act+'/14  global pulse '+lastPulse.toFixed(4)+'</div>'+document.getElementById('log').innerHTML;
+}
+function evalBody(){const b=body();let ok=0,m=[];for(let k=0;k<testW.length;k++){const x=resp(b.g,b.mass,testW[k]),u=abs2(x[upper]),l=abs2(x[lower]);let credit;if(Math.abs(u-l)<1e-12*Math.max(1,u,l))credit=.5;else credit=Number((u>l?0:1)===testT[k]);const d=testT[k]===0?u:l,w=testT[k]===0?l:u;ok+=credit;m.push(10*Math.log10((d+1e-12)/(w+1e-12)))}document.getElementById('acc').textContent=(100*ok/testW.length).toFixed(1)+'%';document.getElementById('margin').textContent=(m.reduce((a,b)=>a+b,0)/m.length).toFixed(1)+' dB';document.getElementById('loss').textContent=taskLoss().toFixed(3)}
+function draw(){const b=body(),cv=document.getElementById('cv'),c=cv.getContext('2d');c.clearRect(0,0,cv.width,cv.height);for(let e=0;e<E;e++){const[i,j]=edges[e],t=trafficE[e],eligible=eligE[e]>0;c.strokeStyle=eligible?'#c7ff57':'rgba(102,251,209,'+(.18+.65*t)+')';c.lineWidth=1+2.4*b.g[e];c.beginPath();c.moveTo(...pos[i]);c.lineTo(...pos[j]);c.stroke()}for(let i=0;i<N;i++){const t=trafficM[i],eligible=eligM[i]>0;c.fillStyle=i===source?'#ffc857':i===upper?'#66fbd1':i===lower?'#ff547f':'rgba(102,251,209,'+(.25+.65*t)+')';c.beginPath();c.arc(pos[i][0],pos[i][1],7,0,7);c.fill();c.strokeStyle=eligible?'#c7ff57':'#ff547f';c.lineWidth=eligible?3:1;c.beginPath();c.arc(pos[i][0],pos[i][1],10+8*Math.sqrt(b.mass[i]),0,7);c.stroke()}c.fillStyle='#91aaa5';c.font='11px ui-monospace';c.fillText('input',55,300);c.fillText('upper',620,70);c.fillText('lower',620,450)}
+function refresh(){draw();evalBody()}
+document.getElementById('one').onclick=()=>{oneUpdate();refresh()};document.getElementById('run50').onclick=()=>{for(let i=0;i<50;i++)oneUpdate();refresh()};document.getElementById('reset').onclick=()=>{ze.fill(0);zm.fill(0);m1e.fill(0);m2e.fill(0);m1m.fill(0);m2m.fill(0);trafficE.fill(1);trafficM.fill(1);eligE.fill(0);eligM.fill(0);step=0;lastPulse=0;document.getElementById('updates').textContent='0';document.getElementById('active').textContent='—';document.getElementById('pulse').textContent='—';document.getElementById('log').innerHTML='<div>body reset. no local credit yet.</div>';refresh()};document.getElementById('shuffle').onclick=()=>{shufflePulse=!shufflePulse;document.getElementById('shuffle').textContent='SHUFFLE GLOBAL PULSE: '+(shufflePulse?'ON':'OFF');document.getElementById('shuffle').style.background=shufflePulse?'#431827':'#10262b'};refresh();
+})();
+</script>
+</body>
+</html>
