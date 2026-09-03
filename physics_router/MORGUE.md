@@ -27,3 +27,18 @@ Sometimes a seed finds a perfect routing solution, but across equal-budget scala
 ### "The body learned from local biological plasticity"
 
 No. Gate 0 uses external SPSA driven by a scalar task score. A future gate must derive local updates to g and m from traffic plus global consequence.
+
+
+### "Gate 0 only memorized four pure frequencies"
+
+Too strong. Gate 1 freezes the Gate-0 bodies and evaluates 512 unseen mixtures of finite Gaussian-windowed packets with randomized phase, amplitude, width, onset, and +/-0.025 frequency jitter.
+
+SPACE_CLOCK averages 94.24% correct routed components and +1.61 dB mean 5th-percentile margin. No Gate-1 retraining occurs.
+
+### "Finite-packet success means nonlinear source separation"
+
+No. The body is linear. Superposition plus frequency-selective transfer explains the result. The components are deliberately separated by carrier frequency. This is passive spectral routing, not blind source separation.
+
+### "The joint body is robust on every trained seed"
+
+No. Mean performance is strong, but some joint seeds still collapse to about 74.9% component accuracy and negative worst-case margin. Gate 1 establishes an across-seed advantage, not universal convergence.
