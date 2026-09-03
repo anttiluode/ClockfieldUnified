@@ -42,3 +42,24 @@ No. The body is linear. Superposition plus frequency-selective transfer explains
 ### "The joint body is robust on every trained seed"
 
 No. Mean performance is strong, but some joint seeds still collapse to about 74.9% component accuracy and negative worst-case margin. Gate 1 establishes an across-seed advantage, not universal convergence.
+
+
+### "Gate 2 eliminates global information"
+
+No. Each structural element has local traffic and eligibility, but the scalar task consequence is broadcast globally and the resource budgets are globally normalized.
+
+### "Gate 2 invented a new local optimizer"
+
+No. The rule is a distributed simultaneous-perturbation / three-factor construction: local perturbation eligibility multiplied by a broadcast scalar consequence.
+
+### "Traffic gating is the whole learning signal"
+
+No. Shuffling traffic addresses reduces packet accuracy from 99.90% to 94.20%, so traffic locality matters, but the catastrophic attacker is the shuffled global pulse: 64.78% packet accuracy and negative 5th-percentile margin.
+
+### "Every parameter must update on every trial"
+
+Not in this toy. Traffic-gated learning activates 67.70% of structural parameters per update and reaches 99.90% finite-packet component accuracy. Ungated updates all parameters and is slightly less reliable across packet seeds here.
+
+### "Local plasticity means autonomous self-training"
+
+No. A task evaluator still produces the scalar loss. Gate 3 must turn that consequence into persistent history and test adaptation when the environment changes over time.
